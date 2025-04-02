@@ -25,6 +25,8 @@ export function createFPSCamera(canvas, scene, engine) {
     camera.keysLeft = [81]; 
     camera.keysRight = [68];
 
+    camera.ellipsoid = new BABYLON.Vector3(1.2, 1, 1.2);
+    camera.checkCollisions = true;
     scene.activeCamera = camera;
 
     // pointer lock
@@ -32,26 +34,5 @@ export function createFPSCamera(canvas, scene, engine) {
         canvas.requestPointerLock();
     });
 
-    enablePointerLock(true, canvas, camera, engine);
-}
-
-function mouseMove(e, camera, engine) {
-    let deltaTime = engine.getDeltaTime();
-
-    camera.rotation.x += e.movementY * deltaTime * 0.001;
-    camera.rotation.y -= e.movementX * deltaTime * 0.001;
-}
-
-export function enablePointerLock(on, canvas, camera, engine) {
-    if (on) {
-        document.addEventListener("pointerlockchange", () => {  // le bouger pour le modifier quand on est dans un menu
-            if (document.pointerLockElement === canvas) {
-                document.addEventListener("mousemove", mouseMove, camera, engine);
-            } else {
-                document.removeEventListener("mousemove", mouseMove, camera, engine);
-            }
-        });
-    } else {
-        document.removeEventListener("mousemove", mouseMove, camera, engine);
-    }
+    return camera;
 }

@@ -7,6 +7,10 @@ import { initAudio } from "./sound.js";
 
 export function createScene(engine, canvas) {
     const scene = new BABYLON.Scene(engine);
+    scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+    scene.applyGravity = true;
+    scene.collisionsEnabled = true;
+
     const camera = createFPSCamera(canvas, scene, engine);
     const light = createLight(scene);
     const box1 = createBox(scene, new BABYLON.Vector3(1, 2, 1), new BABYLON.Vector3(0, 1, 0));
