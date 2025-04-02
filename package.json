@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "babylonjs": "^8.0.2"
+    "babylonjs": "^8.0.2",
+    "cannon-es": "^0.20.0"
   }
 }

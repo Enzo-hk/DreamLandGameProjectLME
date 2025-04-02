@@ -9,25 +9,38 @@ export function createCamera(canvas, scene) {
     return camera;
 }
 
-export function createFPSCamera(canvas, scene, engine) {
+export function createFPSCamera(canvas, scene, engine, cameraPhysicsBody) {
     scene.useRightHandedSystem = true;
 
-    const camera = new BABYLON.FreeCamera("FPS", new BABYLON.Vector3(0, 1.8, 0), scene);
+    const camera = new BABYLON.FreeCamera("FPS", new BABYLON.Vector3(0, 2.8, -3), scene);
     camera.attachControl(canvas, true);
-    camera.rotation = new BABYLON.Vector3.Zero();
 
     camera.speed = 2.5;
     camera.inertia = 0;
     camera.angularSensibility = 500;  // modifiable dans les paramètres
 
-    camera.keysUp = [90];  // modifiable dans les paramètres en fonction du layout
-    camera.keysDown = [83];
-    camera.keysLeft = [81]; 
-    camera.keysRight = [68];
+    camera.keysUp = [90];  //90  // modifiable dans les paramètres en fonction du layout
+    camera.keysDown = [83];  //83
+    camera.keysLeft = [81];  // 81
+    camera.keysRight = [68];  // 68
+    camera.keysDownward = [83];
+    
+    cameraPhysicsBody.isVisible = true;  // Make the box invisible
+    cameraPhysicsBody.position = camera.position; // Place it at the camera's position
+    cameraPhysicsBody.physicsImpostor = new BABYLON.PhysicsImpostor(cameraPhysicsBody, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, friction: 1 });
+    
+    // Apply force to the physics body, which will affect the camera indirectly
+    camera.parent = cameraPhysicsBody;
+    cameraPhysicsBody.applyGravity = true;
 
-    camera.ellipsoid = new BABYLON.Vector3(1.2, 1, 1.2);
-    camera.checkCollisions = true;
     scene.activeCamera = camera;
+    camera.checkCollisions = true;
+    
+    scene.registerBeforeRender(function () {
+        camera.position.y = cameraPhysicsBody.position.y;
+        cameraPhysicsBody.position.z = camera.position.z;
+        cameraPhysicsBody.position.x = camera.position.x;
+    });
 
     // pointer lock
     canvas.addEventListener("click", () => {
@@ -35,4 +48,16 @@ export function createFPSCamera(canvas, scene, engine) {
     });
 
     return camera;
+}
+
+export async function jump(camera, cameraPhysicsBody, jumping) {
+    const force = new BABYLON.Vector3(0, 5, 0); // Apply force on the Z-axis
+    cameraPhysicsBody.physicsImpostor.applyImpulse(force, cameraPhysicsBody.position);
+    setTimeout(() => {
+        jumping.value = false;
+    }, 1500);
+// Attach the camera to the physics object
+    /** 
+    console.log("1");
+    asyncJump(camera);*/
 }

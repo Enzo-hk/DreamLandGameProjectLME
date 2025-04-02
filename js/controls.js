@@ -1,3 +1,5 @@
+import { jump } from "./camera.js";
+
 export function setupControls(scene, box) {
     let keys = {};
     let targetX = box.position.x; // Target X position
@@ -24,6 +26,7 @@ export function setupControls(scene, box) {
         if (keys["a"]) scene.beginAnimation(box, 0, 60, true); 
         if (keys["e"]) scene.beginAnimation(box, 0, 0, false); 
     });
+    // for jumping
     // for moving:
     window.addEventListener("keypress", (e) => { 
         if (keys["a"]) scene.beginAnimation(box, 0, 60, true); 
@@ -59,4 +62,32 @@ export function setupControls(scene, box) {
         if (keys["y"]) box.rotation.y += 0.1; 
         if (keys["h"]) box.rotation.y -= 0.1; ; 
     });
+}
+
+export function cameraControls(scene, camera, cameraPhysicsBody) {
+    let keys = {};
+    let jumping = new BoolJump(false);
+
+    function handleKeyDown(e) {
+        keys[e.key] = true;
+    }
+    function handleKeyUp(e) { 
+        keys[e.key] = false; 
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    
+    window.addEventListener("keypress", (e) => {
+        if (keys[" "] && !jumping.value)  {
+            jumping.value = true;
+            jump(camera, cameraPhysicsBody, jumping);
+        }
+    });
+}
+
+export class BoolJump {
+    constructor(value) {
+        this.value = value;
+    }
 }
