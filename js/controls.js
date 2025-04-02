@@ -1,3 +1,5 @@
+import { makeBoxMovable, makeBoxUnmovable } from "./objects.js";
+
 export function setupControls(scene, box) {
     let keys = {};
     let targetX = box.position.x; // Target X position
@@ -59,4 +61,43 @@ export function setupControls(scene, box) {
         if (keys["y"]) box.rotation.y += 0.1; 
         if (keys["h"]) box.rotation.y -= 0.1; ; 
     });
+}
+
+export function setupCameraControls(scene, h1) {
+    scene.onPointerMove = function () {
+        onPointerMove(scene, h1);
+    }
+
+    let keys = {};
+
+    function handleKeyDown(e) {
+        keys[e.key] = true;
+    }
+    function handleKeyUp(e) { 
+        keys[e.key] = false; 
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    
+    window.addEventListener("keypress", (e) => {
+        if (keys["a"]) {  // make an object movable
+            const picked = scene.pick(scene.pointerX, scene.pointerY);
+            if (picked.hit) {
+                if (picked.pickedMesh.physicsImpostor === undefined || picked.pickedMesh.physicsImpostor._isDisposed) {
+                    makeBoxMovable(scene, picked.pickedMesh);
+                } else {
+                    makeBoxUnmovable(picked.pickedMesh);
+                }
+            }
+        }
+    });
+}
+
+function onPointerMove(scene, h1) {
+    const picked = scene.pick(scene.pointerX, scene.pointerY);
+    h1.removeAllMeshes();
+    if (picked.hit) {
+        h1.addMesh(picked.pickedMesh, BABYLON.Color3.Black());
+    }
 }

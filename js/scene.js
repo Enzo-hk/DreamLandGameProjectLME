@@ -1,9 +1,8 @@
-import * as CANNON from "../node_modules/cannon-es";
 import { createCamera, createFPSCamera } from "./camera.js";
 import { createLight } from "./light.js";
 import { createBox, createGround, makeBoxMovable } from "./objects.js";
 import { setupAnimation } from "./animation.js";
-import { setupControls } from "./controls.js";
+import { setupCameraControls, setupControls } from "./controls.js";
 import { initAudio } from "./sound.js";
 
 export function createScene(engine, canvas) {
@@ -22,7 +21,9 @@ export function createScene(engine, canvas) {
     const box3 = createBox(scene, new BABYLON.Vector3(1, 2, 1), new BABYLON.Vector3(2, 1, 0));
     const ground = createGround(scene);
 
-    makeBoxMovable(scene, box1, physicsPlugin);
+    const h1 = new BABYLON.HighlightLayer("h1", scene);
+    setupCameraControls(scene, h1);
+
     //initAudio();
     /**setupAnimation(box1);
     setupAnimation(box2);

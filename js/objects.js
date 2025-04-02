@@ -7,8 +7,9 @@ export function createBox(scene, size, pos) {
 }
 
 export function createGround(scene) {
-    const ground = BABYLON.MeshBuilder.CreateGround("ground", {width:10, height:10});
+    const ground = BABYLON.MeshBuilder.CreateGround("ground", {width:25, height:25});
     ground.checkCollisions = true;
+    ground.isPickable = false;
 
     ground.physicsImpostor = new BABYLON.PhysicsImpostor(
         ground,
@@ -20,16 +21,15 @@ export function createGround(scene) {
     return ground;
 }
 
-export function makeBoxMovable(scene, box, physicsPlugin) {
+export function makeBoxMovable(scene, box) {
     box.physicsImpostor = new BABYLON.PhysicsImpostor(
         box,
         BABYLON.PhysicsImpostor.BoxImpostor,
-        { mass: 0, restitution: 0.9 },
+        { mass: .8, restitution: .1, friction: .1 },
         scene
     );
+}
 
-    box.addEventListener("collide", function(e) {
-        const relativeVelocity = e.contact.getImpactVelocityAlongNormal();
-        console.log(relativeVelocity);
-    })
+export function makeBoxUnmovable(box) {
+    box.physicsImpostor.dispose();
 }

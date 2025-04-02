@@ -11,7 +11,7 @@ export function createCamera(canvas, scene) {
 export function createFPSCamera(canvas, scene, engine) {
     scene.useRightHandedSystem = true;
 
-    const camera = new BABYLON.FreeCamera("FPS", new BABYLON.Vector3(0, 1.8, 0), scene);
+    const camera = new BABYLON.FreeCamera("FPS", new BABYLON.Vector3(0, 10.8, -3), scene);
     camera.attachControl(canvas, true);
     camera.rotation = new BABYLON.Vector3.Zero();
 
@@ -28,10 +28,31 @@ export function createFPSCamera(canvas, scene, engine) {
     camera.checkCollisions = true;
     scene.activeCamera = camera;
 
+    enablePhysics(scene, camera);
+
     // pointer lock
     canvas.addEventListener("click", () => {
         canvas.requestPointerLock();
     });
 
     return camera;
+}
+
+function enablePhysics(scene, camera) {
+    const cameraBody = BABYLON.MeshBuilder.CreateBox("cameraBody", {}, scene);  // box de collision de la cam pour les objets amovibles
+    cameraBody.scaling = new BABYLON.Vector3(2.5, 1, 2.5);
+    cameraBody.position = camera.position;
+    cameraBody.visibility = false;
+    cameraBody.isPickable = false;
+
+    cameraBody.physicsImpostor = new BABYLON.PhysicsImpostor(  // box impostor
+        cameraBody,
+        BABYLON.PhysicsImpostor.BoxImpostor,
+        { mass: 10, restitution: 0, friction: 1 },
+        scene
+    );
+
+    scene.registerBeforeRender(() => {  // la box suit le joueur
+        cameraBody.position = camera.position;
+    });
 }
