@@ -92,6 +92,13 @@ export function setupCameraControls(scene, h1) {
             }
         }
     });
+
+    window.addEventListener("click", (e) => {
+        const picked = scene.pick(scene.pointerX, scene.pointerY);
+        if (picked.hit) {
+            console.log("Vous avez cliqué sur : " + picked.pickedMesh);
+        }
+    });
 }
 
 function onPointerMove(scene, h1) {

@@ -30,11 +30,6 @@ export function createFPSCamera(canvas, scene, engine) {
 
     enablePhysics(scene, camera);
 
-    // pointer lock
-    canvas.addEventListener("click", () => {
-        canvas.requestPointerLock();
-    });
-
     return camera;
 }
 

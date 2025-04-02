@@ -14,6 +14,11 @@ export function createScene(engine, canvas) {
     const physicsPlugin = new BABYLON.CannonJSPlugin(true, 10, CANNON);
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), physicsPlugin);
 
+    // pointer lock
+    canvas.addEventListener("click", () => {
+        canvas.requestPointerLock();
+    });
+
     const camera = createFPSCamera(canvas, scene, engine);
     const light = createLight(scene);
     const box1 = createBox(scene, new BABYLON.Vector3(1, 2, 1), new BABYLON.Vector3(0, 1, 0));
