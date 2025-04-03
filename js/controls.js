@@ -78,22 +78,19 @@ export function setupCameraControls(scene, camera) {
     //for jumping
     window.addEventListener("keypress", (e) => {
         if (keys[" "]) {
-            if (jumpData.jumping) {  // déjà en saut
-                return;
-            }
-            else {  // nouveau saut
+            if (!jumpData.jumping) {  // nouveau saut
                 jumpData.jumping = true;
                 jump(jumpData, camera); 
             }
         }
-    })
+    });
 }
 
 class Jump {
     constructor(jumping) {
         this.jumping = jumping;
         this.height = 1;
-        this.timeToMaxHeight = 1000;  // temps pour aller en haut du jump == vitesse du jump
+        this.timeToMaxHeight = 100;  // temps pour aller en haut du jump == vitesse du jump
         this.fps = 60;
     }
 };
@@ -101,24 +98,21 @@ class Jump {
 async function jump(jumpData, camera) {
     let currentJumpHeight = 0;
     let startY = camera.position.y;
-    var i = 0;
-    var t;
+    let i = 0;
     for (; i <= jumpData.fps; i++) {
         currentJumpHeight = Math.sin((Math.PI/2)/jumpData.fps * i);
         camera.position.y = startY + currentJumpHeight;
-        t = await wait(jumpData);
+        await wait(jumpData);
     }
     for (; i <= jumpData.fps*2; i++) {
         currentJumpHeight = Math.sin((Math.PI/2)/jumpData.fps * i);
         camera.position.y = startY + currentJumpHeight;
-        t = await wait(jumpData);
+        await wait(jumpData);
     }
     camera.position.y = startY;
     jumpData.jumping = false;
 }
 
 function wait(jumpData) {
-    return new Promise((result) => {
-        setTimeout(() => { return 1; }, 100);
-    });
+    return new Promise(resolve => setTimeout(resolve, jumpData.timeToMaxHeight/jumpData.fps));
 }
