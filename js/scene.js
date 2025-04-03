@@ -1,3 +1,7 @@
+async function getInitializedHavok() {
+  return await HavokPhysics();
+}
+
 import { createCamera, createFPSCamera } from "./camera.js";
 import { createLight } from "./light.js";
 import { createBox, createGround, makeBoxMovable } from "./objects.js";
@@ -5,13 +9,13 @@ import { setupAnimation } from "./animation.js";
 import { setupCameraControls, setupControls } from "./controls.js";
 import { initAudio } from "./sound.js";
 
-export function createScene(engine, canvas) {
+export async function createScene(engine, canvas) {
     const scene = new BABYLON.Scene(engine);
     scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
     scene.applyGravity = true;
     scene.collisionsEnabled = true;
-
-    const physicsPlugin = new BABYLON.CannonJSPlugin(true, 10, CANNON);
+    const havokInstance = await HavokPhysics();
+    const physicsPlugin = new BABYLON.HavokPlugin(true, havokInstance);
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), physicsPlugin);
 
     // pointer lock
@@ -27,7 +31,7 @@ export function createScene(engine, canvas) {
     const ground = createGround(scene);
 
     const h1 = new BABYLON.HighlightLayer("h1", scene);
-    setupCameraControls(scene, h1);
+    setupCameraControls(scene, camera, h1);
 
     //initAudio();
     /**setupAnimation(box1);

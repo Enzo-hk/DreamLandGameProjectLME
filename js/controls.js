@@ -63,7 +63,7 @@ export function setupControls(scene, box) {
     });
 }
 
-export function setupCameraControls(scene, h1) {
+export function setupCameraControls(scene, camera, h1) {
     scene.onPointerMove = function () {
         onPointerMove(scene, h1);
     }
@@ -96,7 +96,16 @@ export function setupCameraControls(scene, h1) {
     window.addEventListener("click", (e) => {
         const picked = scene.pick(scene.pointerX, scene.pointerY);
         if (picked.hit) {
-            console.log("Vous avez cliqué sur : " + picked.pickedMesh);
+            console.log(picked.pickedMesh.metadata);
+            if (picked.pickedMesh.metadata === null && scene.metadata === null) {
+                scene.metadata = {pickedForMoving: true};
+                picked.pickedMesh.metadata = {pickedForMoving: true};
+                moveObjectWithCamera(scene, camera, picked);
+            }
+            else {
+                scene.metadata = null;
+                picked.pickedMesh.metadata = null;
+            }
         }
     });
 }
@@ -107,4 +116,15 @@ function onPointerMove(scene, h1) {
     if (picked.hit) {
         h1.addMesh(picked.pickedMesh, BABYLON.Color3.Black());
     }
+}
+
+function moveObjectWithCamera(scene, camera, picked) {
+    makeBoxMovable(scene, picked.pickedMesh);
+
+    const cameraBody = new BABYLON.PhysicsBody(camera.metadata.body, BABYLON.PhysicsMotionType.DYNAMIC, false, scene);
+    const meshBody = new BABYLON.PhysicsBody(picked.pickedMesh, BABYLON.PhysicsMotionType.DYNAMIC, false, scene);
+
+    cameraBody.addJoint(meshBody, new BABYLON.PhysicsJoint(
+        BABYLON.PhysicsJoint.LockJoint, {}
+    ));
 }

@@ -34,20 +34,22 @@ export function createFPSCamera(canvas, scene, engine) {
 }
 
 function enablePhysics(scene, camera) {
-    const cameraBody = BABYLON.MeshBuilder.CreateBox("cameraBody", {}, scene);  // box de collision de la cam pour les objets amovibles
-    cameraBody.scaling = new BABYLON.Vector3(2.5, 1, 2.5);
-    cameraBody.position = camera.position;
-    cameraBody.visibility = false;
-    cameraBody.isPickable = false;
+    const cameraBox = BABYLON.MeshBuilder.CreateBox("cameraBody", {}, scene);  // box de collision de la cam pour les objets amovibles
+    cameraBox.scaling = new BABYLON.Vector3(2.5, 1, 2.5);
+    cameraBox.position = camera.position;
+    cameraBox.visibility = false;
+    cameraBox.isPickable = false;
 
-    cameraBody.physicsImpostor = new BABYLON.PhysicsImpostor(  // box impostor
-        cameraBody,
-        BABYLON.PhysicsImpostor.BoxImpostor,
-        { mass: 10, restitution: 0, friction: 1 },
-        scene
-    );
+    const cameraBody = new BABYLON.PhysicsBody(cameraBox, BABYLON.PhysicsMotionType.STATIC, false, scene);
+    cameraBody.setMassProperties({
+        mass: 10,
+        restitution: 0,
+        friction: 1
+    });
+
+    camera.metadata = {box: cameraBox, body: cameraBody};
 
     scene.registerBeforeRender(() => {  // la box suit le joueur
-        cameraBody.position = camera.position;
+        cameraBox.position = camera.position;
     });
 }

@@ -11,23 +11,22 @@ export function createGround(scene) {
     ground.checkCollisions = true;
     ground.isPickable = false;
 
-    ground.physicsImpostor = new BABYLON.PhysicsImpostor(
-        ground,
-        BABYLON.PhysicsImpostor.BoxImpostor,
-        { mass: 0, restitution: 0.9 },
-        scene
-    );
+    const groundBody = new BABYLON.PhysicsBody(ground, BABYLON.PhysicsMotionType.STATIC, false, scene);
+    groundBody.setMassProperties({
+        mass: 0,
+        restitution: 0.9
+    })
 
     return ground;
 }
 
 export function makeBoxMovable(scene, box) {
-    box.physicsImpostor = new BABYLON.PhysicsImpostor(
-        box,
-        BABYLON.PhysicsImpostor.BoxImpostor,
-        { mass: .8, restitution: .1, friction: .1 },
-        scene
-    );
+    const boxBody = new BABYLON.PhysicsBody(box, BABYLON.PhysicsMotionType.DYNAMIC, false, scene);
+    boxBody.setMassProperties({
+        mass: .8,
+        restitution: .1,
+        friction: .1
+    })
 }
 
 export function makeBoxUnmovable(box) {
