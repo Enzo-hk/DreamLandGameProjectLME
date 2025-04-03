@@ -2,7 +2,7 @@ import { createCamera, createFPSCamera } from "./camera.js";
 import { createLight } from "./light.js";
 import { createBox, createGround } from "./objects.js";
 import { setupAnimation } from "./animation.js";
-import { setupControls } from "./controls.js";
+import { setupControls, setupCameraControls } from "./controls.js";
 import { initAudio } from "./sound.js";
 
 export function createScene(engine, canvas) {
@@ -12,6 +12,8 @@ export function createScene(engine, canvas) {
     scene.collisionsEnabled = true;
 
     const camera = createFPSCamera(canvas, scene, engine);
+    setupCameraControls(scene, camera);
+
     const light = createLight(scene);
     const box1 = createBox(scene, new BABYLON.Vector3(1, 2, 1), new BABYLON.Vector3(0, 1, 0));
     const box2 = createBox(scene, new BABYLON.Vector3(1, 2, 1), new BABYLON.Vector3(-2, 1, 0));
