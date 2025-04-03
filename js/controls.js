@@ -84,15 +84,20 @@ export function setupCameraControls(scene, camera, h1) {
         if (keys["a"]) {  // make an object movable
             const picked = scene.pick(scene.pointerX, scene.pointerY);
             if (picked.hit) {
-                if (picked.pickedMesh.physicsImpostor === undefined || picked.pickedMesh.physicsImpostor._isDisposed) {
+                console.log(picked.pickedMesh.metadata);
+                if (picked.pickedMesh.metadata === null || picked.pickedMesh.metadata.body._isDisposed) {
                     makeBoxMovable(scene, picked.pickedMesh);
                 } else {
                     makeBoxUnmovable(picked.pickedMesh);
                 }
+                console.log(picked.pickedMesh.metadata);
             }
         }
+        if (keys[" "]) {
+            camera.metadata.body.applyImpulse(new BABYLON.Vector3(0, 50, 0), camera.position);
+        }
     });
-
+    /**
     window.addEventListener("click", (e) => {
         const picked = scene.pick(scene.pointerX, scene.pointerY);
         if (picked.hit) {
@@ -107,7 +112,7 @@ export function setupCameraControls(scene, camera, h1) {
                 picked.pickedMesh.metadata = null;
             }
         }
-    });
+    });*/
 }
 
 function onPointerMove(scene, h1) {
