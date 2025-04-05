@@ -1,3 +1,4 @@
+import { setUpCameraControls } from "./cameraControls.js";
 
 export function createCamera(canvas, scene) {
     const camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 3, new BABYLON.Vector3(0, 0, 0));
@@ -12,10 +13,10 @@ export function createCamera(canvas, scene) {
 export function createFPSCamera(canvas, scene, engine, cameraPhysicsBody) {
     scene.useRightHandedSystem = true;
 
-    const camera = new BABYLON.FreeCamera("FPS", new BABYLON.Vector3(0, 2.8, -3), scene);
+    const camera = new BABYLON.FreeCamera("freeCamera", new BABYLON.Vector3(0, 3, -3), scene);
     camera.attachControl(canvas, true);
 
-    camera.speed = 2.5;
+    camera.speed = 1;
     camera.inertia = 0;
     camera.angularSensibility = 500;  // modifiable dans les paramètres
 
@@ -51,7 +52,7 @@ export function createFPSCamera(canvas, scene, engine, cameraPhysicsBody) {
 }
 
 export async function jump(camera, cameraPhysicsBody, jumping) {
-    const force = new BABYLON.Vector3(0, 5, 0); // Apply force on the Z-axis
+    const force = new BABYLON.Vector3(0, 5, 0); // Apply force on the Y-axis
     cameraPhysicsBody.physicsImpostor.applyImpulse(force, cameraPhysicsBody.position);
     setTimeout(() => {
         jumping.value = false;
@@ -60,4 +61,12 @@ export async function jump(camera, cameraPhysicsBody, jumping) {
     /** 
     console.log("1");
     asyncJump(camera);*/
+}
+
+export function createUniversalCamera(canvas, scene) {
+    const camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 2, -10), scene);
+    scene.activeCamera = camera;
+    camera.attachControl(canvas, true);
+    camera.setTarget(BABYLON.Vector3.Zero()); // Set the camera target to the origin
+    return camera;
 }

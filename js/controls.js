@@ -1,4 +1,4 @@
-import { jump } from "./camera.js";
+import { jump } from "./camera/camera.js";
 
 export function setupControls(scene, box) {
     let keys = {};
@@ -64,30 +64,3 @@ export function setupControls(scene, box) {
     });
 }
 
-export function cameraControls(scene, camera, cameraPhysicsBody) {
-    let keys = {};
-    let jumping = new BoolJump(false);
-
-    function handleKeyDown(e) {
-        keys[e.key] = true;
-    }
-    function handleKeyUp(e) { 
-        keys[e.key] = false; 
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-    
-    window.addEventListener("keypress", (e) => {
-        if (keys[" "] && !jumping.value)  {
-            jumping.value = true;
-            jump(camera, cameraPhysicsBody, jumping);
-        }
-    });
-}
-
-export class BoolJump {
-    constructor(value) {
-        this.value = value;
-    }
-}
