@@ -6,6 +6,8 @@ export function setUpCameraControls(canvas, scene, camera) {
     switchCameraSize(scene, camera);
     setUpCameraGravity(scene, camera);
     setUpCameraJump(scene, camera);
+    setUpCameraSelector(scene, camera);
+    setUpCameraPointer(scene, camera);
 }
 
 function setUpCameraSpeed(camera) { // also change in setUpCameraSprint if you change the speed here
@@ -97,30 +99,29 @@ function setUpCameraJump(scene, camera) {
     });
 }
 
-// export function cameraControls(scene, camera, cameraPhysicsBody) {
-//     let keys = {};
-//     let jumping = new BoolJump(false);
+function setUpCameraSelector(scene, camera) {
+    const h1 = new BABYLON.HighlightLayer("h1", scene);  // highlight
+    h1.innerGlow = true;
+    h1.outerGlow = false;
 
-//     function handleKeyDown(e) {
-//         keys[e.key] = true;
-//     }
-//     function handleKeyUp(e) { 
-//         keys[e.key] = false; 
-//     }
+    scene.onPointerMove = function () {
+        const ray = new BABYLON.Ray(camera.position, camera.getForwardRay().direction, 1000);  // rayon qui part de la camera dans la direction où on regarde
+        const picked = scene.pickWithRay(ray);  // objet touché par le rayon
+        h1.removeAllMeshes();  // on enlève l'highlight des autres objets
+        if (picked.hit) {
+            h1.addMesh(picked.pickedMesh, BABYLON.Color3.Black());  // highlight
+        }
+    }
+}
 
-//     window.addEventListener("keydown", handleKeyDown);
-//     window.addEventListener("keyup", handleKeyUp);
-    
-//     window.addEventListener("keypress", (e) => {
-//         if (keys[" "] && !jumping.value)  {
-//             jumping.value = true;
-//             jump(camera, cameraPhysicsBody, jumping);
-//         }
-//     });
-// }
+function setUpCameraPointer(scene, camera) {
+    const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("pointerUI");
 
-// export class BoolJump {
-//     constructor(value) {
-//         this.value = value;
-//     }
-// }
+    const pointer = new BABYLON.GUI.Image("pointer", "./assets/pointer.png");
+    pointer.width = "10px";
+    pointer.height = "10px";
+    pointer.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    pointer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+
+    advancedTexture.addControl(pointer);
+}

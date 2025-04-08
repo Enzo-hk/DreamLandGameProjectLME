@@ -5,6 +5,7 @@ import { setupAnimation } from "./animation.js";
 import { setupControls } from "./controls.js";
 import { initAudio } from "./sound.js";
 import { setUpCameraControls } from "./camera/cameraControls.js";
+import { enableGrabbing } from "./grab.js";
 
 
 
@@ -18,6 +19,7 @@ export function createScene(engine, canvas) {
 
     const camera = createUniversalCamera(canvas, scene);
     setUpCameraControls(canvas, scene, camera);
+    enableGrabbing(scene, camera);
 
     const light = createLight(scene);
     const ground = createGround(scene);
@@ -37,7 +39,7 @@ export function createScene(engine, canvas) {
     item.physicsImpostor = new BABYLON.PhysicsImpostor(
         item,
         BABYLON.PhysicsImpostor.BoxImpostor,
-        { mass: 1, restitution: 0.5 },
+        { mass: 0.125, restitution: 0.1 },
         scene
     );
 
@@ -45,6 +47,13 @@ export function createScene(engine, canvas) {
         cube,
         BABYLON.PhysicsImpostor.BoxImpostor,
         { mass: 0, restitution: 0.5 },
+        scene
+    );
+
+    sphere.physicsImpostor = new BABYLON.PhysicsImpostor(
+        sphere,
+        BABYLON.PhysicsImpostor.SphereImpostor,
+        { mass : 100, restitution: 0 },
         scene
     );
     
@@ -56,18 +65,19 @@ export function createScene(engine, canvas) {
     );
     
     
-    let state = 1;
+    /*let state = 1;
     let velocityY = 0.3; // Initial velocity
     let velocityZ = 0.3; // Initial velocity
     let grab = () => {
         if (state === 0) {
-            item.position.x = camera.position.x +  1;
-            item.position.y = camera.position.y;
-            item.position.z = camera.position.z +  1;
+            const ray = camera.getForwardRay();
+            const pointAlongRay = ray.origin.add(ray.direction.scale(5)); // 5 units forward
+            item.position.x = pointAlongRay._x;
+            item.position.y = pointAlongRay._y;
+            item.position.z = pointAlongRay._z;
 
         }
         else {
-            item.position = item.position;
             item.position.y += velocityY;   
             item.position.z += velocityZ;   
         }
@@ -90,7 +100,7 @@ export function createScene(engine, canvas) {
             state = (state + 1) % 2; // Toggle between 0 (grab) and 1 (release)
 
         }
-    });
+    });*/
     // ---------------------------------------------------- Fin des tests pour prendre des objets ---------------------------------------------------------
 
     // Des sons randoms pour le moment
