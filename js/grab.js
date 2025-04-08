@@ -32,5 +32,6 @@ function grab(state, picked, camera) {
         picked.position.x = pointAlongRay._x;
         picked.position.y = pointAlongRay._y;
         picked.position.z = pointAlongRay._z;
+        //picked.rotation = camera.rotation.clone();  // ça remet l'objet à sa place après je sais pas pourquoi, et il a plus de physiques
     }
 }

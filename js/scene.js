@@ -14,8 +14,7 @@ export function createScene(engine, canvas) {
     scene.applyGravity = true;
     scene.gravity = new BABYLON.Vector3(0, -0.15, 0);
     scene.collisionsEnabled = true;
-    const physicsPlugin = new BABYLON.CannonJSPlugin();
-    // scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), physicsPlugin);
+    scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), new BABYLON.CannonJSPlugin());
 
     const camera = createUniversalCamera(canvas, scene);
     setUpCameraControls(canvas, scene, camera);
@@ -33,7 +32,6 @@ export function createScene(engine, canvas) {
     sphere.checkCollisions = true;
 
     // Init du moteur physique
-    scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), new BABYLON.CannonJSPlugin());
 
     const item = createBox(scene, new BABYLON.Vector3(0.5, 0.5, 0.5), new BABYLON.Vector3(0, 1.25, 0));
     item.physicsImpostor = new BABYLON.PhysicsImpostor(
@@ -53,7 +51,7 @@ export function createScene(engine, canvas) {
     sphere.physicsImpostor = new BABYLON.PhysicsImpostor(
         sphere,
         BABYLON.PhysicsImpostor.SphereImpostor,
-        { mass : 100, restitution: 0 },
+        { mass : 1, restitution: 0 },
         scene
     );
     
@@ -63,45 +61,6 @@ export function createScene(engine, canvas) {
         { mass: 0, restitution: 0.5 },
         scene
     );
-    
-    
-    /*let state = 1;
-    let velocityY = 0.3; // Initial velocity
-    let velocityZ = 0.3; // Initial velocity
-    let grab = () => {
-        if (state === 0) {
-            const ray = camera.getForwardRay();
-            const pointAlongRay = ray.origin.add(ray.direction.scale(5)); // 5 units forward
-            item.position.x = pointAlongRay._x;
-            item.position.y = pointAlongRay._y;
-            item.position.z = pointAlongRay._z;
-
-        }
-        else {
-            item.position.y += velocityY;   
-            item.position.z += velocityZ;   
-        }
-        
-    }
-    window.addEventListener("keydown", (event) => {
-        if (event.key === "g") {
-            velocityZ = 0.3;
-            scene.onBeforeRenderObservable.add(() => {
-                grab();
-                velocityY -= 0.015;
-                velocityZ -= 0.015;
-                if (velocityZ < 0) {
-                    velocityZ = 0;
-                }
-                if (velocityY < 0) {
-                    velocityY = 0;
-                }
-            });
-            state = (state + 1) % 2; // Toggle between 0 (grab) and 1 (release)
-
-        }
-    });*/
-    // ---------------------------------------------------- Fin des tests pour prendre des objets ---------------------------------------------------------
 
     // Des sons randoms pour le moment
     let isMoving = false;

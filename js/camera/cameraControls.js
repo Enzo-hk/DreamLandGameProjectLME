@@ -8,6 +8,7 @@ export function setUpCameraControls(canvas, scene, camera) {
     setUpCameraJump(scene, camera);
     setUpCameraSelector(scene, camera);
     setUpCameraPointer(scene, camera);
+    setUpCameraImpostor(scene, camera);
 }
 
 function setUpCameraSpeed(camera) { // also change in setUpCameraSprint if you change the speed here
@@ -124,4 +125,22 @@ function setUpCameraPointer(scene, camera) {
     pointer.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
 
     advancedTexture.addControl(pointer);
+}
+
+function setUpCameraImpostor(scene, camera) {
+    const cameraCollision = BABYLON.MeshBuilder.CreateCylinder("cameraBox", { diameter: 1.5}, scene);
+    cameraCollision.visibility = false;
+    cameraCollision.position = camera.position;
+    cameraCollision.isPickable = false;
+
+    cameraCollision.physicsImpostor = new BABYLON.PhysicsImpostor(
+        cameraCollision, 
+        BABYLON.PhysicsImpostor.CylinderImpostor, 
+        { mass: 0, friction: 0.5, restitution: 0.3 }, 
+        scene
+    );
+
+    scene.onBeforeRenderObservable.add(() => {
+        cameraCollision.position = camera.position.clone().add(new BABYLON.Vector3(0, -1, 0));
+    });
 }
