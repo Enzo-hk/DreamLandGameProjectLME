@@ -48,12 +48,18 @@ function switchCameraSize(scene, camera) {
         if (event.key === "c") {
             if (state === 0) {
                 camera.ellipsoid = new BABYLON.Vector3(0.5, 0.1, 0.5); // Player hitbox size: small
+                camera.metadata.cameraBox.metadata.yStep = 0.05;
+                updateCameraImpostor(scene, camera, 0.2);
             }
             else if (state === 1) {
                 camera.ellipsoid = new BABYLON.Vector3(0.5, 1, 0.5); // Player hitbox size: normal
+                camera.metadata.cameraBox.metadata.yStep = -0.75;
+                updateCameraImpostor(scene, camera, 1);
             }
             else if (state === 2) { 
                 camera.ellipsoid = new BABYLON.Vector3(1, 2, 1); // Player hitbox size: large
+                camera.metadata.cameraBox.metadata.yStep = -1.5;
+                updateCameraImpostor(scene, camera, 2);
             }
             state = (state + 1) % 3; // Cycle through the states
         }
@@ -127,20 +133,44 @@ function setUpCameraPointer(scene, camera) {
     advancedTexture.addControl(pointer);
 }
 
-function setUpCameraImpostor(scene, camera) {
-    const cameraCollision = BABYLON.MeshBuilder.CreateCylinder("cameraBox", { diameter: 1.5}, scene);
+const cameraBoxParam = {  // paramètres de la box
+    mass: 0,
+    friction: 0.5,
+    restitution: 0.3
+}
+
+function setUpCameraImpostor(scene, camera) {  // collision avec les objets ayant une physique
+    const cameraCollision = BABYLON.MeshBuilder.CreateCylinder("cameraBox", { diameter: 1.5, height: 2.5}, scene);
     cameraCollision.visibility = false;
     cameraCollision.position = camera.position;
     cameraCollision.isPickable = false;
+    cameraCollision.metadata = { yStep: -0.75 };
 
     cameraCollision.physicsImpostor = new BABYLON.PhysicsImpostor(
         cameraCollision, 
         BABYLON.PhysicsImpostor.CylinderImpostor, 
-        { mass: 0, friction: 0.5, restitution: 0.3 }, 
+        cameraBoxParam, 
         scene
     );
 
+    camera.metadata = {cameraBox: cameraCollision};
+
     scene.onBeforeRenderObservable.add(() => {
-        cameraCollision.position = camera.position.clone().add(new BABYLON.Vector3(0, -1, 0));
+        cameraCollision.position = camera.position.clone().add(new BABYLON.Vector3(0, cameraCollision.metadata.yStep, 0));
     });
+}
+
+function updateCameraImpostor(scene, camera, scale) {  // pour quand on change la taille du perso
+    const cameraCollision = camera.metadata.cameraBox;
+    cameraCollision.scaling.y = scale;
+
+    cameraCollision.physicsImpostor.dispose();
+    cameraCollision.physicsImpostor = null;
+
+    cameraCollision.physicsImpostor = new BABYLON.PhysicsImpostor(
+        cameraCollision, 
+        BABYLON.PhysicsImpostor.CylinderImpostor, 
+        cameraBoxParam, 
+        scene
+    );
 }
