@@ -1,4 +1,4 @@
-export function setUpCameraControls(canvas, scene, camera) {
+export function setUpCameraControls(canvas, scene, camera, advencedTexture) {
     setUpCameraSpeed(camera);
     setUpCameraMovementControls(camera);
     setUpCameraLock(scene, canvas);
@@ -7,8 +7,9 @@ export function setUpCameraControls(canvas, scene, camera) {
     setUpCameraGravity(scene, camera);
     setUpCameraJump(scene, camera);
     setUpCameraSelector(scene, camera);
-    setUpCameraPointer(scene, camera);
+    setUpCameraPointer(scene, camera, advencedTexture);
     setUpCameraImpostor(scene, camera);
+    //enableMovingItems(scene, camera);
 }
 
 function setUpCameraSpeed(camera) { // also change in setUpCameraSprint if you change the speed here
@@ -107,23 +108,21 @@ function setUpCameraJump(scene, camera) {
 }
 
 function setUpCameraSelector(scene, camera) {
-    const h1 = new BABYLON.HighlightLayer("h1", scene);  // highlight
-    h1.innerGlow = true;
-    h1.outerGlow = false;
+    const pointedItemHighlighter = new BABYLON.HighlightLayer("pointedItemHighlighter", scene);  // highlight
+    pointedItemHighlighter.innerGlow = true;
+    pointedItemHighlighter.outerGlow = false;
 
     scene.onPointerMove = function () {
         const ray = new BABYLON.Ray(camera.position, camera.getForwardRay().direction, 1000);  // rayon qui part de la camera dans la direction où on regarde
         const picked = scene.pickWithRay(ray);  // objet touché par le rayon
-        h1.removeAllMeshes();  // on enlève l'highlight des autres objets
+        pointedItemHighlighter.removeAllMeshes();  // on enlève l'highlight des autres objets
         if (picked.hit) {
-            h1.addMesh(picked.pickedMesh, BABYLON.Color3.Black());  // highlight
+            pointedItemHighlighter.addMesh(picked.pickedMesh, BABYLON.Color3.Black());  // highlight
         }
     }
 }
 
-function setUpCameraPointer(scene, camera) {
-    const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("pointerUI");
-
+function setUpCameraPointer(scene, camera, advancedTexture) {
     const pointer = new BABYLON.GUI.Image("pointer", "./assets/pointer.png");
     pointer.width = "10px";
     pointer.height = "10px";
@@ -174,3 +173,13 @@ function updateCameraImpostor(scene, camera, scale) {  // pour quand on change l
         scene
     );
 }
+/**
+function enableMovingItems(scene, camera) {
+    window.addEventListener("keydown", (event) => {
+        if (event.key == "m") {
+            const ray = new BABYLON.Ray(camera.position, camera.getForwardRay().direction, 1000);  // rayon qui part de la camera dans la direction où on regarde
+            const picked = scene.pickWithRay(ray).pickedMesh;  // objet touché par le rayon
+            if (picked) enableMoveable(picked);
+        }
+    });
+}*/

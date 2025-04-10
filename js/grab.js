@@ -4,8 +4,6 @@ export function enableGrabbing(scene, camera) {
     let picked = null;
     let physicsImpostor = null;
     let impostorOptions = null;
-    let xRot = null;
-    let zRot = null;
 
     window.addEventListener("keydown", (event) => {
         if (event.key === "g") {
@@ -13,8 +11,9 @@ export function enableGrabbing(scene, camera) {
                 const ray = new BABYLON.Ray(camera.position, camera.getForwardRay().direction, 1000);
                 picked = scene.pickWithRay(ray).pickedMesh;
                 if (!picked) return;  // si rien n'est grab on arrête sans changer de state
+                // on pourrait mettre le reste dans une autre fonction pour mieux gérer si on veut pas faire que grab avec cette touche
 
-                if (picked.physicsImpostor) {
+                if (picked.physicsImpostor) {  // on retire son physicsImpostor si il en a un (pour pas pousser les objets)
                     physicsImpostor = picked.physicsImpostor;
                     impostorOptions = {
                         mass: picked.physicsImpostor.getParam("mass"),
@@ -24,11 +23,9 @@ export function enableGrabbing(scene, camera) {
                     picked.physicsImpostor.dispose();
                     picked.physicsImpostor = null;
                 }
-                xRot = picked.rotation.x;
-                zRot = picked.rotation.z;
 
                 observer = scene.onBeforeRenderObservable.add(() => {
-                    grab(state, picked, camera, xRot, zRot);
+                    grab(state, picked, camera);
                 });
                 state = 1;
             }
@@ -42,8 +39,7 @@ export function enableGrabbing(scene, camera) {
                 );
                 physicsImpostor = null;
                 impostorOptions = null;
-                console.log(picked);
-                console.log(picked.physicsImpostor);
+
                 scene.onBeforeRenderObservable.remove(observer);
                 state = 0;
             }
@@ -51,7 +47,7 @@ export function enableGrabbing(scene, camera) {
     });
 }
 
-function grab(state, picked, camera, xRot, zRot) {
+function grab(state, picked, camera) {
     if (picked == null) return;
 
     if (state === 1) {
@@ -60,6 +56,6 @@ function grab(state, picked, camera, xRot, zRot) {
         picked.position.x = pointAlongRay._x;
         picked.position.y = pointAlongRay._y;
         picked.position.z = pointAlongRay._z;
-        picked.rotation = new BABYLON.Vector3(xRot, camera.rotation.y, zRot);  // ça remet l'objet à sa place après je sais pas pourquoi, et il a plus de physiques
+        picked.rotation.y = camera.rotation.y;  // ça remet l'objet à sa place après je sais pas pourquoi, et il a plus de physiques
     }
 }

@@ -6,6 +6,7 @@ import { setupControls } from "./controls.js";
 import { initAudio } from "./sound.js";
 import { setUpCameraControls } from "./camera/cameraControls.js";
 import { enableGrabbing } from "./grab.js";
+import { createDialogBox, disableDialogBox, enableDialogBox, updateText } from "./dialog.js";
 
 
 
@@ -15,13 +16,34 @@ export function createScene(engine, canvas) {
     scene.gravity = new BABYLON.Vector3(0, -0.15, 0);
     scene.collisionsEnabled = true;
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), new BABYLON.CannonJSPlugin());
+    let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");    
+
 
     const camera = createUniversalCamera(canvas, scene);
-    setUpCameraControls(canvas, scene, camera);
+    setUpCameraControls(canvas, scene, camera, advancedTexture);
     enableGrabbing(scene, camera);
 
     const light = createLight(scene);
     const ground = createGround(scene);
+
+    // ---------- Tests DialogBox ----------
+    let dialogBoxEnabled = false;
+    let dialogBox = createDialogBox("");  // boîte de dialogue vide
+    updateText(dialogBox, "Hello World!");
+    
+    window.addEventListener("keydown", (event) => {
+        if (event.key == "b") {
+            if (!dialogBoxEnabled) {
+                dialogBoxEnabled = true;
+                enableDialogBox(advancedTexture, dialogBox);
+            }
+            else {
+                dialogBoxEnabled = false;
+                disableDialogBox(advancedTexture, dialogBox);
+            }
+        }
+    });
+    // ---------- Fin tests DialogBox ----------
 
     // ---------------------- Tests pour prendre des objets, à mettre dans un autre fichier plus tard ---------------------------
     const cube = createBox(scene, new BABYLON.Vector3(3, 1, 3), new BABYLON.Vector3(0, 0.5, 0));
