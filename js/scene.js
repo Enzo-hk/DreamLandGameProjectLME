@@ -7,6 +7,7 @@ import { initAudio } from "./sound.js";
 import { setUpCameraControls } from "./camera/cameraControls.js";
 import { enableGrabbing } from "./grab.js";
 import { createDialogBox, disableDialogBox, enableDialogBox, updateText } from "./dialog.js";
+import { loadLevel } from "./levels/level1.js";
 
 
 
@@ -24,7 +25,7 @@ export function createScene(engine, canvas) {
     enableGrabbing(scene, camera);
 
     const light = createLight(scene);
-    const ground = createGround(scene);
+    //const ground = createGround(scene);
 
     // ---------- Tests DialogBox ----------
     let dialogBoxEnabled = false;
@@ -32,6 +33,7 @@ export function createScene(engine, canvas) {
     updateText(dialogBox, "Hello World!");
     
     window.addEventListener("keydown", (event) => {
+        if (event.key == "a") console.log(camera.rotation);
         if (event.key == "b") {
             if (!dialogBoxEnabled) {
                 dialogBoxEnabled = true;
@@ -43,10 +45,12 @@ export function createScene(engine, canvas) {
             }
         }
     });
+
+    loadLevel(scene, advancedTexture, camera);
     // ---------- Fin tests DialogBox ----------
 
     // ---------------------- Tests pour prendre des objets, à mettre dans un autre fichier plus tard ---------------------------
-    const cube = createBox(scene, new BABYLON.Vector3(3, 1, 3), new BABYLON.Vector3(0, 0.5, 0));
+    /*const cube = createBox(scene, new BABYLON.Vector3(3, 1, 3), new BABYLON.Vector3(0, 0.5, 0));
     const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", { diameter: 2 }, scene);
     sphere.position.y = 1;
     sphere.position.x = 3;
@@ -82,7 +86,7 @@ export function createScene(engine, canvas) {
         BABYLON.PhysicsImpostor.BoxImpostor,
         { mass: 0, restitution: 0.5 },
         scene
-    );
+    );*/
 
     // Des sons randoms pour le moment
     let isMoving = false;
@@ -129,9 +133,9 @@ export function createScene(engine, canvas) {
 
     
     // texture pour mieux voir le sol
-    const groundMat = new BABYLON.StandardMaterial("groundMat");
+    /*const groundMat = new BABYLON.StandardMaterial("groundMat");
     groundMat.diffuseTexture = new BABYLON.Texture("assets/sky.jpg", scene);
-    ground.material = groundMat;
+    ground.material = groundMat;*/
 
     return scene;
 }
