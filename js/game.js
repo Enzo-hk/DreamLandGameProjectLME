@@ -1,7 +1,14 @@
 import { createScene } from "./scene.js";
 
+let gameStarted = false;
 const startButton = document.getElementById("startGame");
 startButton.addEventListener("click", startGame)
+window.addEventListener("keypress", (e) => {
+    if (e.key == "Enter" && !gameStarted) {
+        startGame();
+        gameStarted = true;
+    }
+})
 
 function launchGame() {
     const canvas = document.getElementById("renderCanvas");
