@@ -1,13 +1,26 @@
 import { createScene } from "./scene.js";
 
-const canvas = document.getElementById("renderCanvas");
-const engine = new BABYLON.Engine(canvas, true);
-const scene = createScene(engine, canvas);
+const startButton = document.getElementById("startGame");
+startButton.addEventListener("click", startGame)
 
-engine.runRenderLoop(function () {
-    scene.render();
-});
+function launchGame() {
+    const canvas = document.getElementById("renderCanvas");
+    const engine = new BABYLON.Engine(canvas, true);
+    const scene = createScene(engine, canvas);
 
-window.addEventListener("resize", function () {
-    engine.resize();
-});
+    engine.runRenderLoop(function () {
+        scene.render();
+    });
+
+    window.addEventListener("resize", function () {
+        engine.resize();
+    });
+}
+
+function startGame() {
+    document.getElementById('menu').style.display = 'none';
+    document.getElementById('renderCanvas').style.display = 'block';
+    document.getElementById('bg').style.display = 'none';
+    launchGame();
+}
+  
