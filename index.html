@@ -31,6 +31,13 @@
     </div>
 
     <div id="menu">
+        <div id="play-pause-button">
+            <div id="pause-button-on"></div>
+            <div id="pause-button-off">
+                <div class="stick"></div>
+                <div class="stick"></div>
+            </div>
+        </div>
         <h1>DreamLand LME</h1>
         <div id="container">
             <button id="startGame">Jouer</button>
@@ -52,8 +59,6 @@
                     // Autoplay was prevented. This might happen in some browsers
                     // if the user hasn't interacted with the page yet.
                     console.error("Autoplay prevented:", error);
-                    // You might want to add a button or other UI element
-                    // to allow the user to initiate music playback.
                 });
                 backgroundMusic.loop = true; // Ensure looping in JS as well
             }
@@ -63,17 +68,30 @@
         playMusic();
 
         // Optional: Add controls to pause/play the music
-        // const playPauseButton = document.createElement('button');
-        // playPauseButton.textContent = 'Play/Pause Music';
-        // document.body.appendChild(playPauseButton);
-
-        // playPauseButton.addEventListener('click', function() {
-        //     if (backgroundMusic.paused) {
-        //         backgroundMusic.play();
-        //     } else {
-        //         backgroundMusic.pause();
-        //     }
-        // });
+        const playPauseButton = document.getElementById("play-pause-button");
+        const buttonOn = document.getElementById("pause-button-on");
+        const buttonOff = document.getElementById("pause-button-off");
+        const buttonOffSticks = document.getElementsByClassName("stick");
+        
+        playPauseButton.addEventListener('click', music);
+        window.addEventListener('keydown', (e) => {
+            if (e.key == "p") music();
+        });
+        function music() {
+            if (backgroundMusic.paused) {
+                backgroundMusic.play();
+                buttonOff.style.display = "flex";
+                buttonOffSticks[0].style.display = "block";
+                buttonOffSticks[1].style.display = "block";
+                buttonOn.style.display = "none";
+            } else {
+                backgroundMusic.pause();
+                buttonOff.style.display = "none";
+                buttonOffSticks[0].style.display = "none";
+                buttonOffSticks[1].style.display = "none";
+                buttonOn.style.display = "block";
+            }
+        }
     });
     </script>
     <script type="module" src="js/game.js"></script>

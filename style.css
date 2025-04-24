@@ -67,6 +67,41 @@ h1 {
 }
 
 
+div.stick {
+    display: none;
+    width: 7px;
+    height: 35px;
+    background: white;
+    border-radius: 2px;
+}
+
+div#pause-button-off {
+    display: none;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    filter: drop-shadow(3px 3px 0 #3b2154);
+}
+
+div#pause-button-on {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    width: 0;
+    height: 0;
+    cursor: pointer;
+    border-left: 35px #ffffff solid;
+    border-top: 18px transparent solid;
+    border-bottom: 18px transparent solid;
+    filter: drop-shadow(3px 3px 0 #3b2154);
+}
+
 
 .bg-animation{
   position: relative;
